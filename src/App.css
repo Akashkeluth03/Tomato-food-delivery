@@ -1,0 +1,11 @@
+.food-item-section {
+  padding: 32px 0 48px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  align-items: start;
+}
+
+.food-item-empty {
+  color: #676767;
+}
