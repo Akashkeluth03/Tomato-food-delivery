@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Header from "../Components/Header/Header";
 import ExploreMenu from "../ExploreMenu/ExploreMenu";
 import FoodItem from "../Components/FoodItem/FoodItem";
@@ -7,6 +8,20 @@ import "./HomePage.css";
 
 function HomePage() {
   const [category, setCategory] = useState("All");
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      const element = document.getElementById(location.state.scrollTo);
+      if (element) {
+        // Use a small timeout to let rendering finish
+        const timer = setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [location]);
   const { 
     selectedLocation, 
     restaurants, 

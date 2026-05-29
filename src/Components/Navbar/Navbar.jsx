@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import { assets } from "../../assets/assets";
 import { useCart } from "../../context/CartContext";
@@ -8,6 +8,36 @@ import { useFood } from "../../context/FoodContext";
 const Navbar = ({ setShowLogin, setShowContact, user, onLogout }) => {
   const [menu, setMenu] = useState("home");
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleNavClick = (e, menuName, targetId) => {
+    setMenu(menuName);
+    
+    if (menuName === "contact-us") {
+      setShowContact?.(true);
+    }
+
+    if (targetId) {
+      const element = document.getElementById(targetId);
+      if (element) {
+        if (e && e.preventDefault) {
+          e.preventDefault();
+        }
+        element.scrollIntoView({ behavior: "smooth" });
+      } else {
+        navigate("/", { state: { scrollTo: targetId } });
+      }
+    } else if (menuName === "home") {
+      if (location.pathname === "/") {
+        if (e && e.preventDefault) {
+          e.preventDefault();
+        }
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        navigate("/");
+      }
+    }
+  };
   const { totalItems } = useCart();
   const { locations, selectedLocation, setSelectedLocation, addCustomCity } = useFood();
   const [isAddingCity, setIsAddingCity] = useState(false);
@@ -33,7 +63,7 @@ const Navbar = ({ setShowLogin, setShowContact, user, onLogout }) => {
         <Link
           to="/"
           className="navbar-logo-btn"
-          onClick={() => setMenu("home")}
+          onClick={(e) => handleNavClick(e, "home", null)}
           aria-label="Home"
         >
           <img className="logo" src={assets.logo} alt="" />
@@ -101,7 +131,7 @@ const Navbar = ({ setShowLogin, setShowContact, user, onLogout }) => {
           <Link
             to="/"
             className={`navbar-menu-link ${location.pathname === "/" && menu === "home" ? "active" : ""}`}
-            onClick={() => setMenu("home")}
+            onClick={(e) => handleNavClick(e, "home", null)}
           >
             Home
           </Link>
@@ -110,7 +140,7 @@ const Navbar = ({ setShowLogin, setShowContact, user, onLogout }) => {
           <Link
             to="/"
             className={`navbar-menu-link ${location.pathname === "/" && menu === "menu" ? "active" : ""}`}
-            onClick={() => setMenu("menu")}
+            onClick={(e) => handleNavClick(e, "menu", "explore-menu")}
           >
             Menu
           </Link>
@@ -119,7 +149,7 @@ const Navbar = ({ setShowLogin, setShowContact, user, onLogout }) => {
           <button
             type="button"
             className={`navbar-menu-link ${menu === "mobile-app" ? "active" : ""}`}
-            onClick={() => setMenu("mobile-app")}
+            onClick={(e) => handleNavClick(e, "mobile-app", "app-download")}
           >
             Mobile-App
           </button>
@@ -128,10 +158,7 @@ const Navbar = ({ setShowLogin, setShowContact, user, onLogout }) => {
           <button
             type="button"
             className={`navbar-menu-link ${menu === "contact-us" ? "active" : ""}`}
-            onClick={() => {
-              setMenu("contact-us");
-              setShowContact?.(true);
-            }}
+            onClick={(e) => handleNavClick(e, "contact-us", "footer")}
           >
             contact us
           </button>
